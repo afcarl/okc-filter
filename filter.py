@@ -97,9 +97,9 @@ class OkcMessageFilter(object):
 if __name__ == '__main__':
 	username = sys.argv[1]
 	password = sys.argv[2]
-	keywords = []
 	with open('keywords.txt', 'rb') as keywords_file:
-		keywords = [word for word in keywords_file if len(word) > 0]
+		keywords = [word.strip() for word in keywords_file if len(word.strip()) > 0 and not word.strip().startswith('#')]
+	print 'Keywords: {0}'.format(keywords)
 	okc = OkcSession(username, password)
 	msg_filter = OkcMessageFilter(okc, keywords)
 	msg_filter.apply_filter(skip_read=False)

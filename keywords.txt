@@ -1,3 +1,4 @@
+# Carlin 7 dirty words
 shit
 piss
 fuck
@@ -18,3 +19,7 @@ sex
 sexy
 penis
 vagina
+# David Sedaris personally banned words
+fucky
+fuckyfuck
+fuckyfucky

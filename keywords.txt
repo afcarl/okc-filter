@@ -19,7 +19,43 @@ sex
 sexy
 penis
 vagina
+blowjob
+blow job
 # David Sedaris personally banned words
 fucky
 fuckyfuck
 fuckyfucky
+# Suffixes (including grammatically incorrect ones-- the worst kind of flag word)
+shitting
+shitted
+shitty
+shits
+pissing
+fucking
+fucked
+fucks
+fucker
+cunts
+cocksuckers
+cocksucking
+motherfuckers
+motherfucking
+cocks
+dicks
+whores
+whoring
+whored
+sluts
+slutty
+bitches
+bitchs
+bitchy
+a$$
+asses
+asss
+boob
+boobies
+booby
+boobys
+sexing
+sexying

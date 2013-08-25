@@ -36,6 +36,7 @@ class OkcMessageThread(object):
 		self.messages = None
 		self.read_msg_url = 'http://www.okcupid.com/messages?readmsg=true&threadid={0}&folder=1'.format(thread_id)
 		self.delete_url = 'http://www.okcupid.com/mailbox?ajax=1&deletethread=1&deletemsg=0&threadid={0}&msgid=0'.format(thread_id)
+		self.skip_div_ids = ['collapse', 'new_msg', 'compose', 'quiver', 'deleted']
 
 	def get_messages(self, force_reload=False):
 		if self.messages is None or force_reload:
@@ -46,12 +47,13 @@ class OkcMessageThread(object):
 	def extract_all_messages(self, html_doc):
 		soup = BeautifulSoup(html_doc)
 		msg_divs = soup.find(id='thread').find_all('li')
-		messages = [self.extract_message(m) for m in msg_divs if m['id'] != 'collapse' and \
-																		m['id'] != 'new_msg' and \
-																		m['id'] != 'compose']
+		messages = [self.extract_message(m) for m in msg_divs if m['id'] not in self.skip_div_ids]
 		return messages
 
 	def extract_message(self, div):
+		#print '{0}'.format(unicodedata.normalize('NFKD', div.text).encode('ascii','ignore').strip())
+		#print ''
+		#print ''
 		msg_id = div['id'][8:]
 		text = div.find(class_='message_body', recursive=True).text
 		text = unicodedata.normalize('NFKD', text).encode('ascii','ignore').strip()
@@ -90,8 +92,8 @@ class OkcMessageFilter(object):
 				scan_results = re.findall(self.pattern, message.text, re.IGNORECASE)
 				if len(scan_results) > 0:
 					print 'Message from {0}: FOUND KEYWORD(s): ({1})'.format(thread.from_user, [x[1] for x in scan_results])
-				else:
-					print 'Message clean: {0}'.format(message.text)
+				#else:
+				#	print 'Message clean: {0}'.format(message.text)
 
 
 if __name__ == '__main__':
@@ -99,7 +101,6 @@ if __name__ == '__main__':
 	password = sys.argv[2]
 	with open('keywords.txt', 'rb') as keywords_file:
 		keywords = [word.strip() for word in keywords_file if len(word.strip()) > 0 and not word.strip().startswith('#')]
-	print 'Keywords: {0}'.format(keywords)
 	okc = OkcSession(username, password)
 	msg_filter = OkcMessageFilter(okc, keywords)
 	msg_filter.apply_filter(skip_read=False)

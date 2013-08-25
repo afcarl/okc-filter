@@ -99,8 +99,7 @@ if __name__ == '__main__':
 	password = sys.argv[2]
 	keywords = []
 	with open('keywords.txt', 'rb') as keywords_file:
-		for word in keywords_file:
-			keywords.append(word)
+		keywords = [word for word in keywords_file if len(word) > 0]
 	okc = OkcSession(username, password)
 	msg_filter = OkcMessageFilter(okc, keywords)
 	msg_filter.apply_filter(skip_read=False)

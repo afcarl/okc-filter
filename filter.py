@@ -51,9 +51,6 @@ class OkcMessageThread(object):
 		return messages
 
 	def extract_message(self, div):
-		#print '{0}'.format(unicodedata.normalize('NFKD', div.text).encode('ascii','ignore').strip())
-		#print ''
-		#print ''
 		msg_id = div['id'][8:]
 		text = div.find(class_='message_body', recursive=True).text
 		text = unicodedata.normalize('NFKD', text).encode('ascii','ignore').strip()

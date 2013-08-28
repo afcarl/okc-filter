@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from collections import Counter
+import argparse
 
 
 class OkcSession(object):
@@ -75,9 +76,11 @@ class OkcMessage(object):
 		self.from_me = from_me
 
 class OkcMessageFilter(object):
-	def __init__(self, session, keywords):
+	def __init__(self, session, keywords, min_length=0, max_length=10000):
 		self.session = session
 		self.keywords = keywords
+		self.min_length = min_length
+		self.max_length = max_length
 		self.pattern = '(\W+|^)({0})(\W+|$)'.format('|'.join(map(re.escape, keywords)))
 
 	def apply_filter(self, skip_read=True):
@@ -86,18 +89,33 @@ class OkcMessageFilter(object):
 			if skip_read and thread is not unread:
 				continue
 			for message in thread.get_messages():
-				scan_results = re.findall(self.pattern, message.text, re.IGNORECASE)
-				if len(scan_results) > 0:
-					print 'Message from {0}: FOUND KEYWORD(s): ({1})'.format(thread.from_user, [x[1] for x in scan_results])
-				#else:
-				#	print 'Message clean: {0}'.format(message.text)
+				if len(message.text) < self.min_length:
+					print 'Message from {0}: TOO SHORT'.format(thread.from_user)
+				elif len(message.text) > self.max_length:
+					print 'Message from {0}: TOO LONG'.format(thread.from_user)
+				else:
+					scan_results = re.findall(self.pattern, message.text, re.IGNORECASE)
+					if len(scan_results) > 0:
+						print 'Message from {0}: FOUND KEYWORD(s): ({1})'.format(thread.from_user, [x[1] for x in scan_results])
 
 
 if __name__ == '__main__':
-	username = sys.argv[1]
-	password = sys.argv[2]
-	with open('keywords.txt', 'rb') as keywords_file:
+	parser = argparse.ArgumentParser(description='Filter unwanted messages from your OKCupid profile.')
+	parser.add_argument('username', metavar='username', type=str,
+	                   help='Your OKCupid username.')
+	parser.add_argument('password', metavar='password', type=str,
+	                   help='Your OKCupid password.')
+	parser.add_argument('--keywords', dest='keywords', type=str, default='keywords.txt',
+	                   help='The file containing the banned keywords.')
+	parser.add_argument('--minlength', dest='minlength', type=int, default=0,
+	                   help='The minimum length (number of characters) a message must be to be acceptable.')
+	parser.add_argument('--maxlength', dest='maxlength', type=int, default=10000,
+	                   help='The maximum length (number of characters) a message can be to be acceptable.')
+
+	args = parser.parse_args()
+	
+	with open(args.keywords, 'rb') as keywords_file:
 		keywords = [word.strip() for word in keywords_file if len(word.strip()) > 0 and not word.strip().startswith('#')]
-	okc = OkcSession(username, password)
-	msg_filter = OkcMessageFilter(okc, keywords)
+	okc = OkcSession(args.username, args.password)
+	msg_filter = OkcMessageFilter(okc, keywords, min_length=args.minlength, max_length=args.maxlength)
 	msg_filter.apply_filter(skip_read=False)

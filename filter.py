@@ -83,12 +83,16 @@ class OkcMessageFilter(object):
 		self.max_length = max_length
 		self.pattern = '(\W+|^)({0})(\W+|$)'.format('|'.join(map(re.escape, keywords)))
 
-	def apply_filter(self, skip_read=True):
+	def apply_filter(self, skip_read=True, only_initial=True):
 		threads = okc.get_message_threads(force_reload=True)
 		for thread in threads:
-			if skip_read and thread is not unread:
+			if skip_read and not thread.unread:
 				continue
-			for message in thread.get_messages():
+			messages = thread.get_messages()
+			if only_initial and sum(x.from_me for x in messages) > 0:
+				print 'Message from {0}: Skipping, already replied'.format(thread.from_user)
+				continue
+			for message in messages:
 				if len(message.text) < self.min_length:
 					print 'Message from {0}: TOO SHORT'.format(thread.from_user)
 				elif len(message.text) > self.max_length:
@@ -111,6 +115,11 @@ if __name__ == '__main__':
 	                   help='The minimum length (number of characters) a message must be to be acceptable.')
 	parser.add_argument('--maxlength', dest='maxlength', type=int, default=10000,
 	                   help='The maximum length (number of characters) a message can be to be acceptable.')
+	parser.add_argument('--initial', dest='only_initial', action='store_true', default=False,
+	                   help="Skip message threads if you've replied to them already.")
+	parser.add_argument('--unread', dest='only_unread', action='store_true', default=False,
+	                   help="Skip message threads if you've already read them.")
+
 
 	args = parser.parse_args()
 	
@@ -118,4 +127,4 @@ if __name__ == '__main__':
 		keywords = [word.strip() for word in keywords_file if len(word.strip()) > 0 and not word.strip().startswith('#')]
 	okc = OkcSession(args.username, args.password)
 	msg_filter = OkcMessageFilter(okc, keywords, min_length=args.minlength, max_length=args.maxlength)
-	msg_filter.apply_filter(skip_read=False)
+	msg_filter.apply_filter(skip_read=args.only_unread, only_initial=args.only_initial)

@@ -17,7 +17,7 @@ Positional arguments:
 
 Optional arguments:
 
-* __-h, --help__:            show this help message and exit
+* __-h, --help__:            show this help message and exits
 
 * __--keywords KEYWORDS__:   The file containing the banned keywords.
 

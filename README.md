@@ -9,22 +9,25 @@ Running is simple:
 			                [--maxlength MAXLENGTH] [--initial] [--unread]
 			                username password
 
-positional arguments:
-  username              Your OKCupid username.
-  password              Your OKCupid password.
+Positional arguments:
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --keywords KEYWORDS   The file containing the banned keywords.
-  --minlength MINLENGTH
-                        The minimum length (number of characters) a message
-                        must be to be acceptable.
-  --maxlength MAXLENGTH
-                        The maximum length (number of characters) a message
-                        can be to be acceptable.
-  --initial             Skip message threads if you've replied to them
-                        already.
-  --unread              Skip message threads if you've already read them.
+* username              Your OKCupid username.
+
+* password              Your OKCupid password.
+
+Optional arguments:
+
+* -h, --help            show this help message and exit
+
+* --keywords KEYWORDS   The file containing the banned keywords.
+
+* --minlength MINLENGTH The minimum length (number of characters) a message must be to be acceptable.
+
+* --maxlength MAXLENGTH The maximum length (number of characters) a message can be to be acceptable.
+
+* --initial             Skip message threads if you've replied to them already.
+
+* --unread              Skip message threads if you've already read them.
 
 The script will scrape all of your unread messages, check which ones contain any of the keywords found in keywords.txt, and automatically delete the message thread.
 

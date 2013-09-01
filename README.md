@@ -25,9 +25,9 @@ Optional arguments:
 
 * __--maxlength MAXLENGTH__: The maximum length (number of characters) a message can be to be acceptable.
 
-* __--initial__             Skip message threads if you've replied to them already.
+* __--initial__:             Skip message threads if you've replied to them already.
 
-* __--unread__              Skip message threads if you've already read them.
+* __--unread__:              Skip message threads if you've already read them.
 
 The script will scrape all of your unread messages, check which ones contain any of the keywords found in keywords.txt, and automatically delete the message thread.
 
